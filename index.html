@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Surprise!</title>
+<style>
+  html,body{height:100%;margin:0;background:#000;display:flex;align-items:center;justify-content:center;}
+  video{max-width:100%;max-height:100%;display:block;}
+  #overlay{
+    position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
+    background:rgba(0,0,0,0.65);color:#fff;font-size:24px;cursor:pointer;
+    transition:opacity .2s;backdrop-filter: blur(2px);
+  }
+  #overlay.hidden{opacity:0;pointer-events:none;}
+  #hint{font-size:18px;opacity:0.9}
+</style>
+</head>
+<body>
+  <video id="v" playsinline controls>
+    <source src="prank.mp4" type="video/mp4">
+    Trình duyệt không hỗ trợ video.
+  </video>
+
+  <div id="overlay">
+    <div>
+      <div id="title">press to play video 🔊</div>
+      <div id="hint" style="margin-top:8px;font-size:14px">Nếu không muốn chờ, nhấn 1 lần — sẽ nghe ngay.</div>
+    </div>
+  </div>
+
+<script>
+  const video = document.getElementById('v');
+  const overlay = document.getElementById('overlay');
+
+  // Cố gắng play ngay khi load (nhiều trình duyệt sẽ chặn nếu không có user gesture)
+  window.addEventListener('load', async () => {
+    try {
+      await video.play();
+      // Nếu trình duyệt cho phép, ẩn overlay (nhiều trình duyệt cho phép autoplay nếu không có track âm thanh;
+      // nếu video có âm thanh và được cho phép, thì overlay cũng sẽ ẩn)
+      overlay.classList.add('hidden');
+    } catch (e) {
+      // Bị chặn — để overlay hiển thị để kích hoạt user gesture
+      overlay.classList.remove('hidden');
+      console.log('Autoplay bị chặn, chờ user gesture để bật âm thanh.');
+    }
+  });
+
+  // Khi người xem click (gesture), bật âm thanh và play
+  overlay.addEventListener('click', async (ev) => {
+    try {
+      // đảm bảo âm thanh bật
+      video.muted = false;
+      await video.play();
+      overlay.classList.add('hidden');
+    } catch (err) {
+      console.log('Không thể play ngay: ', err);
+      // nếu vẫn lỗi, thử resume AudioContext trick (nếu dùng WebAudio)
+    }
+  });
+
+  // Nếu muốn: khi click vào chính video cũng sẽ bật âm thanh
+  video.addEventListener('click', async () => {
+    if (video.muted) {
+      try { video.muted = false; await video.play(); overlay.classList.add('hidden'); } catch(e){}
+    }
+  });
+</script>
+</body>
+</html>
