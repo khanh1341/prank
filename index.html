@@ -1,106 +1,31 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Prank Video Fullscreen</title>
-<style>
-  html, body {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    width: 100%;
-    background: #000;
-    overflow: hidden;
-  }
-  body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  video {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    min-width: 100%;
-    min-height: 100%;
-    transform: translate(-50%, -50%);
-    z-index: 1;
-    object-fit: cover;
-  }
-  #overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.7);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    color: #fff;
-    font-size: 36px;
-    cursor: pointer;
-    z-index: 2;
-    backdrop-filter: blur(3px);
-    text-align: center;
-  }
-  #overlay.hidden {
-    opacity: 0;
-    pointer-events: none;
-  }
-  .btn {
-    margin-top: 20px;
-    padding: 15px 25px;
-    border-radius: 12px;
-    background: #ff3b30;
-    color: #fff;
-    font-weight: 700;
-    font-size: 20px;
-  }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prank Video</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background: black;
+      overflow: hidden;
+    }
+    video {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  </style>
 </head>
 <body>
-  <video id="v" autoplay muted playsinline>
-    <source src="prank.mp4" type="video/mp4">
-    Trình duyệt không hỗ trợ video.
+  <video autoplay muted loop playsinline>
+    <source src="prank/prank.mp4" type="video/mp4">
+    Trình duyệt của bạn không hỗ trợ video.
   </video>
-
-  <div id="overlay">
-    <div>Nhấn để bật âm thanh 🔊</div>
-    <div class="btn">Nhấn vào đây!</div>
-  </div>
-
-<script>
-  const video = document.getElementById('v');
-  const overlay = document.getElementById('overlay');
-
-  // Thử play khi load (mute)
-  window.addEventListener('load', () => {
-    video.play().catch(() => {
-      console.log("Autoplay bị chặn, nhấn overlay để bật âm thanh.");
-    });
-  });
-
-  // Click overlay → bật âm thanh và play
-  overlay.addEventListener('click', async () => {
-    video.muted = false;
-    try { await video.play(); } catch(e){console.log(e);}
-    overlay.classList.add('hidden');
-  });
-
-  // Click trực tiếp vào video cũng bật âm thanh
-  video.addEventListener('click', async () => {
-    if(video.muted){
-      video.muted = false;
-      try { await video.play(); } catch(e){console.log(e);}
-      overlay.classList.add('hidden');
-    }
-  });
-
-  // Resize window để video luôn full
-  window.addEventListener('resize', () => {
-    video.style.minWidth = window.innerWidth + 'px';
-    video.style.minHeight = window.innerHeight + 'px';
-  });
-</script>
 </body>
 </html>
